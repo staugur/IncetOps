@@ -77,6 +77,7 @@ SYSTEM = {
 
 #插件配置段
 PLUGINS = {
+
     "IncetOps": {
         "DefaultBackupDatabase": getenv("incetops_defaultbackupdatabase", MYSQL)
     }

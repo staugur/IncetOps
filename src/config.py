@@ -80,6 +80,6 @@ PLUGINS = {
 
     "IncetOps": {
         "DefaultBackupDatabase": getenv("incetops_defaultbackupdatabase", MYSQL)
+        # 默认备份库地址
     }
-    # SQL上线平台
 }

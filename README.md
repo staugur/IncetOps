@@ -1,6 +1,7 @@
 # IncetOps
 基于Inception，一个审计、执行、回滚、统计sql的开源系统
 
+
 ## Environment
 > 1. Python Version: 2.7
 > 2. 框架: Flask
@@ -28,6 +29,26 @@
     sh online_rq.sh start|stop|restart #启动|停止|重启rq、rqscheduler队列服务
 
 4. 启动Web进程:
-    3.1 python main.py #开发环境启动
-    3.2 sh online_gunicorn.sh start|stop|restart #生产环境后台启动,采用uwsgi,不需要额外安装,推荐使用!
+    4.1 python main.py #开发环境启动
+    4.2 sh online_gunicorn.sh start|stop|restart #生产环境后台启动,不需要额外安装,推荐使用!
+```
+
+
+## Nginx
+```
+server {
+    listen       80;
+    server_name  YourDomain;
+    #处理静态资源:
+    location ~ ^\/static\/.*$ {
+        root /xxxxx/IncetOps/src/;
+    }
+    location / {
+       proxy_pass http://127.0.0.1:xxxxx;
+       proxy_set_header Host $host;
+       proxy_set_header X-Real-IP $remote_addr;
+       proxy_set_header X-Forwarded-Proto $scheme;
+       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
 ```

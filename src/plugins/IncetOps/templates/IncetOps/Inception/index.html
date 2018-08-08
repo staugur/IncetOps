@@ -1,0 +1,29 @@
+{% extends "IncetOps/base/base.html" %}
+
+{% block title %}Inception{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='IncetOps/css/public.css') }}" media="all" />
+{% endblock %}
+
+{% block page %}
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-normal addInceptinBtn">添加Inception</a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="inceptionList" lay-filter="inceptionList"></table>
+</form>
+{% endblock %}
+
+{% block script %}
+    <script type="text/html" id="inceptionListBar">
+        <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del">删除</a>
+    </script>
+    <script type="text/javascript">
+        layui.use("Inception");
+    </script>
+{% endblock %}

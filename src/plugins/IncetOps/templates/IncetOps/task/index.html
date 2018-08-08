@@ -1,0 +1,55 @@
+{% extends "IncetOps/base/base.html" %}
+
+{% block title %}任务{% endblock %}
+
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='IncetOps/css/public.css') }}" media="all" />
+    <style type="text/css">
+        pre, kbd, code{font-family:"Microsoft Yahei","Hiragino Sans GB","Helvetica Neue",Helvetica,tahoma,arial,Verdana,sans-serif,"WenQuanYi Micro Hei","\5B8B\4F53";font-size:12px;color: #333;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing:grayscale}
+        .string { color: green; }
+        .number { color: darkorange; }
+        .boolean { color: blue; }
+        .null { color: magenta; }
+        .key { color: red; }
+        code {
+            padding: 2px 4px;
+            color: #d14;
+            white-space: nowrap;
+            background-color: #f7f7f9;
+            border: 1px solid #e1e1e8;
+        }
+    </style>
+{% endblock %}
+
+{% block page %}
+<form class="layui-form">
+    <blockquote class="layui-elem-quote quoteBox">
+        <form class="layui-form">
+            <div class="layui-inline">
+                <a class="layui-btn layui-btn-normal addTaskBtn">添加任务</a>
+            </div>
+        </form>
+    </blockquote>
+    <table id="taskList" lay-filter="taskList"></table>
+</form>
+{% endblock %}
+
+{% block script %}
+    <script type="text/html" id="taskListBar">
+        <a class="layui-btn layui-btn-xs" lay-event="detail">查看</a>
+        {% raw %}
+        {{#  if(d.status === 3 && d.autoviewSQLSHA1) { }}
+            <a class="layui-btn layui-btn-xs layui-btn-normal" lay-event="osc">OSC</a>
+        {{#  } }}
+        {{#  if(d.status === 0 && d.enableRemoteBackup === 1 && d.executeResult) { }}
+            <a class="layui-btn layui-btn-xs layui-btn-primary" lay-event="rollback">回滚语句</a>
+        {{#  } }}
+        {{#  if(d.status === 7 && d.timer_id) { }}
+            <a class="layui-btn layui-btn-xs layui-btn-warm" lay-event="cancel">取消</a>
+        {{#  } }}
+        {% endraw %}
+    </script>
+    <script type="text/javascript">
+        layui.use("Task");
+    </script>
+{% endblock %}

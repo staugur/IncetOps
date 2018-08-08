@@ -1,0 +1,11 @@
+Flask==0.10.1
+MySQL-python>=1.2.3
+torndb>=0.3
+requests
+setproctitle
+gevent
+gunicorn
+enum34
+pycrypto
+rq==0.9.2
+rq-scheduler==0.8.3

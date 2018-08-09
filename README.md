@@ -14,6 +14,17 @@
 演示站任务无法执行！ [IncetOps Demo](http://incetops.saintic.com "IncetOps Demo")
 
 
+## Features
+
+  1. 支持多个Inception服务
+  2. 支持多个数据库，数据库可设置推荐的Inception
+  3. 任务支持立即和定时执行两种方式，且定时任务可取消
+  4. 任务支持OSC并且可以查看OSC详细进度
+  5. 任务支持查看回滚语句
+  6. 统计数据
+  7. 帮助
+
+
 ## Usage
 ```
 1. 安装依赖环境:

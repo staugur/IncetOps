@@ -9,6 +9,11 @@
 > 4. 依赖服务: MySQL + Redis + Passport(认证)
 
 
+## Demo
+
+[IncetOps Demo](http://incetops.saintic.com "IncetOps Demo")
+
+
 ## Usage
 ```
 1. 安装依赖环境:
@@ -52,3 +57,10 @@ server {
     }
 }
 ```
+
+## 效果图
+![数据库][1]
+![任务][2]
+
+[1]: ./Snapshot/db.png
+[2]: ./Snapshot/task.png

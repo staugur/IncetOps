@@ -10,7 +10,7 @@
 """
 from __future__ import absolute_import
 from utils.tool import logger, get_current_timestamp, create_mysql_engine
-from utils.at import KeyGenerationClass
+from utils.aes_cbc import CBC as KeyGenerationClass
 import re
 import time
 import json
@@ -147,7 +147,7 @@ def InceptionProxy(Action, sqlContent, dbData, inception, **kwargs):
         enableRemoteBackup,enableIgnoreWarnings(int)，启用备份、禁用警告
     """
     res = dict(code=1, msg=None)
-    aes = KeyGenerationClass("XingkaOps.AT.Key")
+    aes = KeyGenerationClass()
     if True:
         #检查参数
         if Action in ("Check", "Execute") and sqlContent and inception and check_sql(sqlContent) == True and check_ipport(inception):

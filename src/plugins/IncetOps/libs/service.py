@@ -12,7 +12,7 @@ from __future__ import absolute_import
 from libs.base import PluginBase
 import json
 from utils.tool import logger, create_mysql_engine, ip_check, number_check, get_current_timestamp, datetime_to_timestamp, timestamp_to_utcdatetime, timestamp_datetime, timestamp_after_timestamp
-from utils.at import KeyGenerationClass
+from utils.aes_cbc import CBC as KeyGenerationClass
 from torndb import IntegrityError
 from config import PLUGINS
 from .tool import InceptionProxy, InceptionOSC, QueryRollbackSQL, parse_inception_result
@@ -81,7 +81,7 @@ class DBService(PluginBase):
 
     def __init__(self):
         super(DBService, self).__init__()
-        self.aes = KeyGenerationClass("XingkaOps.AT.Key")
+        self.aes = KeyGenerationClass()
 
     def Encrypt(self, text):
         """加密字符串"""

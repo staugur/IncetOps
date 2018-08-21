@@ -174,11 +174,12 @@ layui.define(['incetops', 'form', 'layer', 'table', 'util', 'laydate'], function
                         '<thead><tr><th>唯一序号</th><th>备份库</th><th>SQL语句</th><th>回滚语句</th><th>错误信息</th></tr></thead><tbody>'
                     ].join("");
                     content += res.data.map(function(row) {
+                        var rollback = row.rollback || '';
                         return ['<tr>',
                             '<td>' + row.opid_time + '</td>',
                             '<td>' + row.backup_dbname + '</td>',
                             '<td>' + row.sql + '</td>',
-                            '<td>' + row.rollback.replace("\n", "<br>") + '</td>',
+                            '<td>' + rollback.replace("\n", "<br>") + '</td>',
                             '<td>' + row.errmsg + '</td>',
                             '</tr>'
                         ].join("");

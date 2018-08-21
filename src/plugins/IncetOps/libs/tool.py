@@ -98,10 +98,7 @@ def parse_inception_result(result, scene):
 def check_sql(sqlContent):
     """针对多行情况检测sql语句"""
     if sqlContent:
-        for row in sqlContent.rstrip().split("\n"):
-            if row[-1] != ";":
-                return "SQL has no separator"
-        return True
+        return sqlContent.rstrip().endswith(';')
     return False
 
 def check_ipport(connect):
@@ -147,12 +144,10 @@ def InceptionProxy(Action, sqlContent, dbData, inception, **kwargs):
         enableRemoteBackup,enableIgnoreWarnings(int)，启用备份、禁用警告
     """
     res = dict(code=1, msg=None)
-    aes = KeyGenerationClass()
+    aes = KeyGenerationClass() #此处key值保持与service.py中DBService一致，否则无法解密
     if True:
         #检查参数
         if Action in ("Check", "Execute") and sqlContent and inception and check_sql(sqlContent) == True and check_ipport(inception):
-            sqlContent = sqlContent.rstrip().replace("\n", "")
-            logger.debug(sqlContent)
             #高危sql检测
             scc = sql_criticalddl_check(sqlContent)
             if scc == "OK":
@@ -161,16 +156,17 @@ def InceptionProxy(Action, sqlContent, dbData, inception, **kwargs):
                 if sic == "OK":
                     # 预检测通过; 先通过dbId查出mysql
                     if dbData and isinstance(dbData, dict) and "host" in dbData and "user" in dbData and "port" in dbData and "passwd" in dbData:
-                        dbData["passwd"] = aes.decrypt(dbData["passwd"])
+                        dbData["passwd"] = unicode(aes.decrypt(dbData["passwd"]))
+                        logger.debug(dbData)
                         # 根据不同Action，使用inception执行
                         idb = IncetDB(host=inception.split(":")[0], port=int(inception.split(":")[-1]))
                         mysql = create_mysql_engine()
                         if Action == "Check":
                             # 通过Inception检查任务中sql
-                            sql = '/*--user=%s;--password=%s;--host=%s;--port=%s;--enable-check;*/\
-                                inception_magic_start;\
-                                %s\
-                                inception_magic_commit;' %(dbData["user"], dbData["passwd"], dbData["host"], dbData["port"], sqlContent)
+                            sql = u'''/*--user=%s;--password=%s;--host=%s;--port=%s;--enable-check;*/
+                                inception_magic_start;
+                                %s
+                                inception_magic_commit;''' %(dbData["user"], dbData["passwd"], dbData["host"], dbData["port"], sqlContent)
                             result = idb.execute(sql)
                             logger.debug(result)
                             if result is None or len(result) == 0:
@@ -186,10 +182,10 @@ def InceptionProxy(Action, sqlContent, dbData, inception, **kwargs):
                                 ebiw += "--disable-remote-backup;"
                             if int(kwargs.get("enableIgnoreWarnings", 0)) == 1:
                                 ebiw += "--enable-ignore-warnings;"
-                            sql = '/*--user=%s;--password=%s;--host=%s;--port=%s;--enable-execute;%s*/\
-                                inception_magic_start;\
-                                %s\
-                                inception_magic_commit;' %(dbData["user"], dbData["passwd"], dbData["host"], dbData["port"], ebiw, sqlContent)
+                            sql = u'''/*--user=%s;--password=%s;--host=%s;--port=%s;--enable-execute;%s*/
+                                inception_magic_start;
+                                %s
+                                inception_magic_commit;''' %(dbData["user"], dbData["passwd"], dbData["host"], dbData["port"], ebiw, sqlContent)
                             logger.debug(sql)
                             if taskId:
                                 # 设置状态为执行中，并设置执行时间

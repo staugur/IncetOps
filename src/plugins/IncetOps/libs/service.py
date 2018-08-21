@@ -228,7 +228,6 @@ class TaskService(PluginBase):
         # 获取其他需要参数，必须项有sd、dbId、inception、applicant，可选默认项
         res = self.AutoCheck(sqlContent, dbId, inception)
         if res["code"] == 0:
-            sqlContent = sqlContent.rstrip().replace("\n", "")
             autoviewResult = res["data"]
             res = dict(code=1, msg=None)
             sd = kwargs["sd"]

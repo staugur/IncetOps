@@ -81,7 +81,7 @@ class DBService(PluginBase):
 
     def __init__(self):
         super(DBService, self).__init__()
-        self.aes = KeyGenerationClass()
+        self.aes = KeyGenerationClass("YRRGBRYQqrV1gv5A")
 
     def Encrypt(self, text):
         """加密字符串"""

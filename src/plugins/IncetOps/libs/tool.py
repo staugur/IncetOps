@@ -144,7 +144,7 @@ def InceptionProxy(Action, sqlContent, dbData, inception, **kwargs):
         enableRemoteBackup,enableIgnoreWarnings(int)，启用备份、禁用警告
     """
     res = dict(code=1, msg=None)
-    aes = KeyGenerationClass() #此处key值保持与service.py中DBService一致，否则无法解密
+    aes = KeyGenerationClass("YRRGBRYQqrV1gv5A") #此处key值保持与service.py中DBService一致，否则无法解密
     if True:
         #检查参数
         if Action in ("Check", "Execute") and sqlContent and inception and check_sql(sqlContent) == True and check_ipport(inception):
@@ -157,7 +157,6 @@ def InceptionProxy(Action, sqlContent, dbData, inception, **kwargs):
                     # 预检测通过; 先通过dbId查出mysql
                     if dbData and isinstance(dbData, dict) and "host" in dbData and "user" in dbData and "port" in dbData and "passwd" in dbData:
                         dbData["passwd"] = unicode(aes.decrypt(dbData["passwd"]))
-                        logger.debug(dbData)
                         # 根据不同Action，使用inception执行
                         idb = IncetDB(host=inception.split(":")[0], port=int(inception.split(":")[-1]))
                         mysql = create_mysql_engine()

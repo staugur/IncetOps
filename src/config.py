@@ -16,7 +16,7 @@ GLOBAL = {
     "ProcessName": "IncetOps",
     #自定义进程名.
 
-    "Host": getenv("incetops_host", "127.0.0.1"),
+    "Host": getenv("incetops_host", "0.0.0.0"),
     #监听地址
 
     "Port": getenv("incetops_port", 16000),
@@ -30,16 +30,16 @@ GLOBAL = {
 SSO = {
 
     "app_name": getenv("incetops_sso_app_name", GLOBAL["ProcessName"]),
-    # SSO中注册的应用名
+    # Passport应用管理中注册的应用名
 
     "app_id": getenv("incetops_sso_app_id", "app_id"),
-    # SSO中注册返回的`app_id`
+    # Passport应用管理中注册返回的`app_id`
 
     "app_secret": getenv("incetops_sso_app_secret", "app_secret"),
-    # SSO中注册返回的`app_secret`
+    # Passport应用管理中注册返回的`app_secret`
 
-    "sso_server": getenv("incetops_sso_server", "https://passport.saintic.com"),
-    # SSO完全合格域名根地址
+    "sso_server": getenv("incetops_sso_server", "YourPassportFQDN"),
+    # Passport部署允许的完全合格域名根地址，例如作者的`https://passport.saintic.com`
 }
 
 

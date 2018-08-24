@@ -44,13 +44,15 @@
     > MYSQL段，设置incetops_mysql_url环境变量
     > REDIS段，设置incetops_redis_url环境变量
     > SSO段，设置incetops_sso_app_id、incetops_sso_app_secret、incetops_sso_server等环境变量
+    > PLUGINS段，设置默认备份库地址incetops_defaultbackupdatabase环境变量，默认值是MYSQL段，即查看回滚语句时所在任务使用的inception服务对应的备份库地址，可能是不同的，此键只是默认，实际查看回滚时可以自定义输入。
+    > SYSTEM段中的incetops_hmac_sha256_key、incetops_aes_cbc_key、incetops_jwt_secret_key一定要与passport中一致，否则无法使用passport统一登录。
 
 3. 启动队列进程:
-    sh online_rq.sh start|stop|restart #启动|停止|重启rq、rqscheduler队列服务
+    sh online_rq.sh start|stop|restart #启动|停止|重启rq、rqscheduler队列服务，用以执行任务
 
 4. 启动Web进程:
     4.1 python main.py #开发环境启动
-    4.2 sh online_gunicorn.sh start|stop|restart #生产环境后台启动,不需要额外安装,推荐使用!
+    4.2 sh online_gunicorn.sh start|stop|restart #生产环境后台启动
 ```
 
 
@@ -59,6 +61,10 @@
 server {
     listen       80;
     server_name  YourDomain;
+    #不允许搜索引擎抓取信息
+    if ($http_user_agent ~* "qihoobot|Baiduspider|Googlebot|Googlebot-Mobile|Googlebot-Image|Mediapartners-Google|Adsbot-Google|Feedfetcher-Google|Yahoo! Slurp|Yahoo! Slurp China|YoudaoBot|Sosospider|Sogou spider|Sogou web spider|Sogou+web+spider|bingbot|MSNBot|ia_archiver|Tomato Bot") {
+        return 403;
+    }
     #处理静态资源:
     location ~ ^\/static\/.*$ {
         root /xxxxx/IncetOps/src/;

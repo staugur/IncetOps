@@ -18,9 +18,9 @@ from config import SYSTEM
 class CBC():
     """密钥生成器"""
 
-    def __init__(self):
+    def __init__(self, key=None):
         # key长度要求16的倍数
-        self.key = SYSTEM["AES_CBC_KEY"]
+        self.key = key or SYSTEM["AES_CBC_KEY"]
         self.mode = AES.MODE_CBC
 
     def encrypt(self, text):

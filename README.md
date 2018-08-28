@@ -36,7 +36,7 @@
     1.1 yum install -y gcc gcc-c++ python-devel libffi-devel openssl-devel mysql-devel
     (或者Ubuntu下`apt-get install build-essential libmysqld-dev libssl-dev python-dev libffi-dev`)
     1.2 pip install -r requirements.txt
-    1.3 需要安装 mysql && redis, mysql需要导入incetops.sql
+    1.3 需要安装 mysql && redis, mysql需要导入misc/incetops.sql
     1.4 认证需要安装`https://github.com/staugur/passport`,体验时可以将main.py中g.signin设置为True
 
 2. 修改配置文件:

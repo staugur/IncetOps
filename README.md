@@ -52,7 +52,7 @@
 
 4. 启动Web进程:
     4.1 python main.py #开发环境启动
-    4.2 sh online_gunicorn.sh start|stop|restart #生产环境后台启动
+    4.2 sh online_gunicorn.sh start|run|stop|restart #生产环境后台启动,run是前台启动
 ```
 
 

@@ -8,7 +8,6 @@ dir=$(cd $(dirname $0); pwd)
 cd $dir
 
 useRqscheduler=true
-redisurl=$(python -c "from config import REDIS;print REDIS")
 pidfile1=${dir}/logs/rq.pid
 logfile1=${dir}/logs/rq.log
 pidfile2=${dir}/logs/rqscheduler.pid
@@ -31,7 +30,9 @@ start)
             echo "$pidfile2 exists, process is already running or crashed"
         else
             echo "Starting rqscheduler server..."
-            rqscheduler --url $redisurl --pid $pidfile2 -i 1 &>> $logfile2 &
+            python -O rqscheduler_worker.py &>> $logfile2 &
+            pid=$!
+            echo $pid > $pidfile2
         fi
     fi
     ;;

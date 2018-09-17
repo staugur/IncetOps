@@ -9,9 +9,11 @@
     :license: MIT, see LICENSE for more details.
 """
 
+import json
 from .tool import logger
 from .jwt import JWTUtil, JWTException
 from .aes_cbc import CBC
+from libs.base import CacheBase
 from config import SSO
 from functools import wraps
 from flask import g, request, redirect, url_for, abort
@@ -116,3 +118,35 @@ def anonymous_required(f):
             return redirect(get_redirect_url())
         return f(*args, **kwargs)
     return decorated_function
+
+
+def set_userinfo(uid, userinfo, expire=None):
+    """ 缓存uid用户信息5min """
+    if uid and isinstance(userinfo, dict):
+        key = "PublicCache:userinfo:{}".format(uid)
+        source = get_userinfo(uid)
+        source.update(userinfo)
+        if source:
+            cache = CacheBase()
+            try:
+                cache.set(key, json.dumps(source), expire)
+            except Exception,e:
+                logger.warn(e)
+            else:
+                return True
+    return False
+
+
+def get_userinfo(uid):
+    """ 查看缓存中uid对应的用户信息 """
+    if uid:
+        key = "PublicCache:userinfo:{}".format(uid)
+        cache = CacheBase()
+        try:
+            data = json.loads(cache.get(key))
+        except:
+            pass
+        else:
+            return data
+    return dict()
+

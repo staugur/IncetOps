@@ -17,7 +17,7 @@ from libs.base import PluginBase
 #: 在这里导入其他模块, 如果有自定义包目录, 使用相对导入, 如: from .lib import Lib
 import requests, json
 from config import SSO
-from utils.web import login_required, anonymous_required, set_ssoparam, set_sessionId, get_redirect_url, get_referrer_url
+from utils.web import login_required, anonymous_required, set_ssoparam, set_sessionId, get_redirect_url, get_referrer_url, set_userinfo
 from utils.tool import url_check, logger, hmac_sha256
 from flask import Blueprint, request, jsonify, g, redirect, url_for, make_response
 
@@ -100,15 +100,17 @@ def authorized():
         # 单点登录
         ticket = request.args.get("ticket")
         if request.method == "GET" and ticket and g.signin == False:
-            resp = sso_request("{}/sso/validate".format(sso_server), dict(Action="validate_ticket"), dict(ticket=ticket, app_name=SSO["app_name"], get_userinfo=False, get_userbind=False))
+            resp = sso_request("{}/sso/validate".format(sso_server), dict(Action="validate_ticket"), dict(ticket=ticket, app_name=SSO["app_name"], get_userinfo=True, get_userbind=False))
             logger.debug("SSO check ticket resp: {}".format(resp))
             if resp and isinstance(resp, dict) and "success" in resp and "uid" in resp:
                 if resp["success"] is True:
                     uid = resp["uid"]
                     sid = resp["sid"]
                     expire = int(resp["expire"])
-                    #userinfo = resp["userinfo"]
-                    #logger.debug(userinfo)
+                    # 获取用户信息，若不需要，可将get_userinfo=True改为False，并注释下两行
+                    g.userinfo = resp["userinfo"].get("data") or dict()
+                    set_userinfo(uid, g.userinfo, expire)
+                    logger.debug(g.userinfo)
                     # 授权令牌验证通过，设置局部会话，允许登录
                     sessionId = set_sessionId(uid=uid, seconds=expire, sid=sid)
                     response = make_response(redirect(get_redirect_url("front.index")))
@@ -142,10 +144,10 @@ def authorized():
                     # 之后根据不同类型的ct处理cd
                     logger.debug("ssoConSync is ok")
                     if ct == "user_profile":
-                        pass
+                        g.userinfo.update(cd)
                     elif ct == "user_avatar":
-                        pass
-                    return jsonify(msg="Synchronization completed", success=True, app_name=SSO["app_name"])
+                        g.userinfo["avatar"] = cd
+                    return jsonify(msg="Synchronization completed", success=set_userinfo(uid, g.userinfo), app_name=SSO["app_name"])
     return "Invalid Authorized"
 
 #: 返回插件主类

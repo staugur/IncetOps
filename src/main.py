@@ -20,7 +20,7 @@ import jinja2
 from config import GLOBAL, SSO
 from version import __version__
 from utils.tool import err_logger, access_logger
-from utils.web import verify_sessionId, analysis_sessionId, get_redirect_url
+from utils.web import verify_sessionId, analysis_sessionId, get_redirect_url, get_userinfo
 from libs.plugins import PluginManager
 from views import FrontBlueprint
 from flask import Flask, request, g, jsonify
@@ -70,6 +70,10 @@ def GlobalTemplateVariables():
 def before_request():
     g.signin = verify_sessionId(request.cookies.get("sessionId"))
     g.sid, g.uid = analysis_sessionId(request.cookies.get("sessionId"), "tuple") if g.signin else (None, None)
+    # 用户信息
+    g.userinfo = get_userinfo(g.uid)
+    app.logger.debug(g.userinfo)
+    # 客户端IP地址
     g.ip = request.headers.get('X-Real-Ip', request.remote_addr)
     # 仅是重定向页面快捷定义
     g.redirect_uri = get_redirect_url()
@@ -126,6 +130,25 @@ def Permission_denied(error=None):
         "code": 403
     }
     return jsonify(message), 403
+
+
+@app.route('/restart')
+def restart_server():
+    res = dict(msg=None, code=1)
+    try:
+        import signal, psutil
+    except ImportError:
+        res.update(msg="No module")
+    else:
+        # gunicorn masterpid
+        pid = os.getppid()
+        p = psutil.Process(pid)
+        err_logger.debug("pid: %s, name: %s" %(pid, p.name()))
+        if "gunicorn: master [{}]".format(GLOBAL["ProcessName"]) == p.name():
+            # 重载gunicorn
+            os.kill(pid, signal.SIGHUP)
+            res.update(code=0)
+    return jsonify(res)
 
 
 if __name__ == '__main__':

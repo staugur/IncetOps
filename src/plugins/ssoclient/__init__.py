@@ -23,7 +23,7 @@ from flask import Blueprint, request, jsonify, g, redirect, url_for, make_respon
 
 #：Your plugin name
 #：你的插件名称
-__name__        = "ssoclient"
+__plugin_name__ = "ssoclient"
 #: Plugin describes information
 #: 插件描述信息
 __description__ = "SSO Client"

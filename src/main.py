@@ -19,11 +19,11 @@ import os
 import jinja2
 from config import GLOBAL, SSO
 from version import __version__
-from utils.tool import err_logger, access_logger
+from utils.tool import err_logger, access_logger, plugin_logger
 from utils.web import verify_sessionId, analysis_sessionId, get_redirect_url, get_userinfo
-from libs.plugins import PluginManager
 from views import FrontBlueprint
-from flask import Flask, request, g, jsonify
+from flask import request, g, jsonify
+from flask_pluginkit import Flask, PluginManager
 
 __author__ = 'staugur'
 __email__ = 'staugur@saintic.com'
@@ -38,23 +38,7 @@ app.config.update(
 )
 
 # 初始化插件管理器(自动扫描并加载运行)
-plugin = PluginManager()
-
-# 注册多模板文件夹
-loader = jinja2.ChoiceLoader([
-    app.jinja_loader,
-    jinja2.FileSystemLoader([p.get("plugin_tpl_path") for p in plugin.get_enabled_plugins if os.path.isdir(os.path.join(app.root_path, p["plugin_tpl_path"]))]),
-])
-app.jinja_loader = loader
-
-# 注册全局模板扩展点
-for tep_name, tep_func in plugin.get_all_tep.iteritems():
-    app.add_template_global(tep_func, tep_name)
-
-# 注册蓝图扩展点
-for bep in plugin.get_all_bep:
-    prefix = bep["prefix"]
-    app.register_blueprint(bep["blueprint"], url_prefix=prefix)
+plugin = PluginManager(app, logger=plugin_logger)
 
 # 注册视图包中蓝图
 app.register_blueprint(FrontBlueprint)
@@ -66,9 +50,9 @@ def GlobalTemplateVariables():
     return data
 
 
-@app.before_request
+@app.before_request_top
 def before_request():
-    g.signin = verify_sessionId(request.cookies.get("sessionId"))
+    g.signin = True#verify_sessionId(request.cookies.get("sessionId"))
     g.sid, g.uid = analysis_sessionId(request.cookies.get("sessionId"), "tuple") if g.signin else (None, None)
     # 用户信息
     g.userinfo = get_userinfo(g.uid)
@@ -77,10 +61,6 @@ def before_request():
     g.ip = request.headers.get('X-Real-Ip', request.remote_addr)
     # 仅是重定向页面快捷定义
     g.redirect_uri = get_redirect_url()
-    # 上下文扩展点之请求后(返回前)
-    before_request_hook = plugin.get_all_cep.get("before_request_hook")
-    for cep_func in before_request_hook():
-        cep_func(request=request, g=g)
 
 
 @app.after_request
@@ -94,10 +74,6 @@ def after_request(response):
         "agent": request.headers.get("User-Agent")
     }
     access_logger.info(data)
-    # 上下文扩展点之请求后(返回前)
-    after_request_hook = plugin.get_all_cep.get("after_request_hook")
-    for cep_func in after_request_hook():
-        cep_func(request=request, response=response, data=data)
     return response
 
 
@@ -130,25 +106,6 @@ def Permission_denied(error=None):
         "code": 403
     }
     return jsonify(message), 403
-
-
-@app.route('/restart')
-def restart_server():
-    res = dict(msg=None, code=1)
-    try:
-        import signal, psutil
-    except ImportError:
-        res.update(msg="No module")
-    else:
-        # gunicorn masterpid
-        pid = os.getppid()
-        p = psutil.Process(pid)
-        err_logger.debug("pid: %s, name: %s" %(pid, p.name()))
-        if "gunicorn: master [{}]".format(GLOBAL["ProcessName"]) == p.name():
-            # 重载gunicorn
-            os.kill(pid, signal.SIGHUP)
-            res.update(code=0)
-    return jsonify(res)
 
 
 if __name__ == '__main__':

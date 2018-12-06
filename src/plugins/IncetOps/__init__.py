@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
     IncetOps.plugins.IncetOps
-    ~~~~~~~~~~~~~~
+    ~~~~~~~~~~~~~~~~~~~~~~~~~
 
     基于Inception，一个审计、执行、回滚、统计sql的开源系统，做的sql上线平台
 
@@ -17,14 +17,14 @@ from libs.base import PluginBase
 #: 在这里导入其他模块, 如果有自定义包目录, 使用相对导入, 如: from .lib import Lib
 from flask import Blueprint, request, render_template, g
 from flask_restful import Api, Resource
-from version import __version__
+from version import __version__ as version
 from config import PLUGINS
 from utils.tool import DO, logger
 from utils.web import login_required
 from .libs.service import InceptionService, DBService, TaskService, MiscService
 #：Your plug-in name must be consistent with the plug-in directory name.
 #：你的插件名称，必须和插件目录名称等保持一致.
-__name__        = "IncetOps"
+__plugin_name__ = "IncetOps"
 #: Plugin describes information. What does it do?
 #: 插件描述信息,什么用处.
 __description__ = "SQL审计、执行、回滚系统"
@@ -33,7 +33,7 @@ __description__ = "SQL审计、执行、回滚系统"
 __author__      = "taochengwei <staugur@saintic.com>"
 #: Plugin Version
 #: 插件版本
-__version__     = __version__
+__version__     = version
 #: Plugin Url
 #: 插件主页
 __url__         = "https://github.com/staugur/IncetOps"
@@ -190,7 +190,7 @@ class IncetOpsMain(PluginBase):
         self.task = TaskService()
         self.misc = MiscService()
 
-    def _bindHook(self, **kwargs):
+    def _bindHook(self):
         g.incetops = DO({
             "inception": self.inception,
             "db": self.db,
@@ -198,15 +198,10 @@ class IncetOpsMain(PluginBase):
             "misc": self.misc,
         })
 
-    def register_cep(self):
+    def register_hep(self):
         """注册上下文入口, 返回扩展点名称及执行的函数"""
         cep = {"before_request_hook": self._bindHook}
         return cep
-
-    def register_tep(self):
-        """注册模板入口, 返回扩展点名称及扩展的代码, 其中include点必须是实际的HTML文件, string点必须是HTML代码."""
-        tep = {"base_left_basic_navigation_include": "IncetOps/nav.html"}
-        return tep
 
     def register_bep(self):
         """注册蓝图入口, 返回蓝图路由前缀及蓝图名称"""

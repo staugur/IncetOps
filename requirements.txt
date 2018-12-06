@@ -1,5 +1,6 @@
-Flask==0.10.1
+Flask>=0.10.1
 Flask-RESTful==0.3.6
+Flask-PluginKit>=2.1.0
 MySQL-python>=1.2.3
 torndb>=0.3
 requests

@@ -52,7 +52,7 @@ def GlobalTemplateVariables():
 
 @app.before_request_top
 def before_request():
-    g.signin = True#verify_sessionId(request.cookies.get("sessionId"))
+    g.signin = verify_sessionId(request.cookies.get("sessionId"))
     g.sid, g.uid = analysis_sessionId(request.cookies.get("sessionId"), "tuple") if g.signin else (None, None)
     # 用户信息
     g.userinfo = get_userinfo(g.uid)

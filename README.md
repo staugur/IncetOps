@@ -2,8 +2,12 @@
 基于Inception，一个审计、执行、回滚、统计sql的开源系统
 
 
+## Issue
+- https://satic.io/n
+
+
 ## Document
-[https://www.saintic.com/blog/261.html](https://www.saintic.com/blog/261.html "https://www.saintic.com/blog/261.html")
+- http://docs.saintic.com/740449
 
 
 ## Environment

@@ -17,7 +17,9 @@
 
 import os
 import jinja2
-from config import GLOBAL, SSO
+import rq_dashboard
+import rq_scheduler_dashboard
+from config import GLOBAL, SSO, REDIS
 from version import __version__
 from utils.tool import err_logger, access_logger, plugin_logger
 from utils.web import verify_sessionId, analysis_sessionId, get_redirect_url, get_userinfo
@@ -34,7 +36,9 @@ __date__ = '2018-08-08'
 # 初始化定义application
 app = Flask(__name__)
 app.config.update(
-    SECRET_KEY=os.urandom(24)
+    SECRET_KEY=os.urandom(24),
+    REDIS_URL = REDIS,
+    RQ_POLL_INTERVAL = 2500,
 )
 
 # 初始化插件管理器(自动扫描并加载运行)
@@ -42,6 +46,8 @@ plugin = PluginManager(app, logger=plugin_logger)
 
 # 注册视图包中蓝图
 app.register_blueprint(FrontBlueprint)
+app.register_blueprint(rq_dashboard.blueprint, url_prefix="/rqdashboard")
+app.register_blueprint(rq_scheduler_dashboard.blueprint, url_prefix="/rqschedulerdashboard")
 
 # 添加模板上下文变量
 @app.context_processor

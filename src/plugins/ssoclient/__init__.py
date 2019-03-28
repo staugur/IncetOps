@@ -51,8 +51,6 @@ __state__       = "enabled"
 
 # 定义sso server地址并删除SSO多余参数
 sso_server = SSO.get("sso_server").strip("/")
-if not url_check(sso_server):
-    raise
 
 # 定义请求函数
 def sso_request(url, params=None, data=None, timeout=5, num_retries=1):

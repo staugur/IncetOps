@@ -86,7 +86,7 @@ class DBService(PluginBase):
     def Encrypt(self, text):
         """加密字符串"""
         if isinstance(text, unicode):
-            text = str(unicode)
+            text = str(text)
         return self.aes.encrypt(text)
 
     def Decrypt(self, text):

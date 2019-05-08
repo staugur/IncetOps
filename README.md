@@ -3,11 +3,11 @@
 
 
 ## Issue
-- https://satic.io/n
+- http://satic.io/issues
 
 
 ## Document
-- http://docs.saintic.com/740449
+- http://docs.saintic.com/incetops
 
 
 ## Environment

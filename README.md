@@ -3,7 +3,7 @@
 
 
 ## Issue
-- http://satic.io/issues
+- http://satic.cn/issues
 
 
 ## Document
@@ -19,7 +19,7 @@
 
 ## Demo
 
-演示站任务无法执行！ [IncetOps Demo](http://incetops.saintic.com "IncetOps Demo")
+演示站任务无法执行！ [IncetOps Demo](http://incetops.demo.saintic.com "IncetOps Demo")
 
 
 ## Features

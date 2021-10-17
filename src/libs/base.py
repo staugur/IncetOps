@@ -26,7 +26,7 @@ class ServiceBase(object):
         if REDIS:
             self.redis = from_url(REDIS)
         else:
-            raise RedisURLError("The value of the REDIS in the config.py file is not valid.")
+            raise ValueError("The value of the REDIS in the config.py file is not valid.")
         # 建立mysql连接
         self.mysql = create_mysql_engine()
         self.asyncQueueHigh = Queue(name='high', connection=self.redis)

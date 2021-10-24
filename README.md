@@ -19,7 +19,7 @@
 
 ## Demo
 
-演示站任务无法执行！ [IncetOps Demo](http://incetops.demo.saintic.com "IncetOps Demo")
+演示站任务无法执行！ [IncetOps Demo](http://incetops.demo.saintic.com)
 
 
 ## Features
@@ -71,10 +71,10 @@ server {
     }
     #处理静态资源:
     location ~ ^\/static\/.*$ {
-        root /xxxxx/IncetOps/src/;
+        root /path/to/IncetOps/src/;
     }
     location / {
-       proxy_pass http://127.0.0.1:xxxxx;
+       proxy_pass http://127.0.0.1:16000;
        proxy_set_header Host $host;
        proxy_set_header X-Real-IP $remote_addr;
        proxy_set_header X-Forwarded-Proto $scheme;

@@ -1,4 +1,4 @@
-Flask==1.1.2
+Flask==2.3.2
 Flask-RESTful==0.3.6
 Flask-PluginKit==3.5.0
 MySQL-python>=1.2.3
